@@ -30,6 +30,7 @@ const App = () => {
   }, [])
 
   const addPerson = (newName) => {
+    if (!newName.trim() || !newPhone.trim()){setMessage({text: 'Need both name and phone to add.', type: 'error'}); return}
     const newPerson = {name: newName, number: newPhone }
     servertalk
       .create(newPerson)
@@ -93,7 +94,7 @@ const App = () => {
     <div>
       <h2>Phonebook</h2>
       <Notification mes={newMessage} />
-      <Filter v={newFilter} onChange={setNewFilter} />
+      <Filter v={newFilter} handleUpdate={setNewFilter} />
       <h3>Add a new</h3>
       <PersonForm
         name={newName}
