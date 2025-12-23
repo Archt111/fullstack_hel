@@ -1,20 +1,23 @@
 const express = require('express')
+const morgan = require('morgan')
+const cors = require('cors')
 const app = express()
-var morgan = require('morgan')
+
+// Middlewares
 app.use(express.json())
-//app.use(morgan('tiny'))
-
-
 app.use(morgan(function (tokens, req, res) {
-  const str = [tokens.method(req, res),
+  const log_format = [tokens.method(req, res),
                 tokens.url(req, res),
                 tokens.status(req, res),
                 tokens.res(req, res, 'content-length'), '-',
                 tokens['response-time'](req, res), 'ms']
+
   if (req.method==='POST')  
-  {return str.concat(JSON.stringify(req.body)).join(' ')}
-  return str.join(' ')}))
-  
+  {return log_format.concat(JSON.stringify(req.body)).join(' ')}
+  return log_format.join(' ')
+}))
+app.use(cors()) 
+app.use(express.static('dist'))
 
 let persons = [
     { 
@@ -44,7 +47,10 @@ let persons = [
     },
 ]
 
-app.get('/api/persons', (request, response) => {response.json(persons)})
+app.get('/api/persons', (request, response) => {response.json(persons)
+  console.log("get all is what it asks for")
+})
+
 
 app.get('/info', (req, res) => {
     res.send(`<p>Phonebook has info of ${persons.length} people</p>
@@ -89,7 +95,7 @@ app.post('/api/persons/', (req, res) => {
     
 })
 
-const PORT = 3001
+const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
