@@ -1,0 +1,38 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+
+        {
+            "name": "Launch Edge",
+            "request": "launch",
+            "type": "msedge",
+            "url": "http://localhost:8080",
+            "webRoot": "C:\\Users\\myng2\\OneDrive - Aalto University\\Maester study\\Fullstack\\Part 11\\full-stack-open-pokedex"
+        },
+        {
+            "command": "npm start",
+            "name": "Run npm start",
+            "request": "launch",
+            "type": "node-terminal"
+        },
+        {
+            "request": "launch",
+            "name": "Launch Program",
+            "type": "node",
+            "program": "$C:\\Users\\myng2\\OneDrive - Aalto University\\Maester study\\Fullstack\\Part 11\\full-stack-open-pokedex\\app.js",
+            "cwd": "C:\\Users\\myng2\\OneDrive - Aalto University\\Maester study\\Fullstack\\Part 11\\full-stack-open-pokedex",
+            "env": {},
+            "runtimeExecutable": "C:\\Users\\myng2\\.deno\\bin\\deno.EXE",
+            "runtimeArgs": [
+                "run",
+                "--unstable",
+                "--inspect-wait",
+                "--allow-all"
+            ],
+            "attachSimplePort": 9229
+        }
+    ]
+}

@@ -1,8 +1,8 @@
 const express = require('express')
 const morgan = require('morgan')
-const cors = require('cors')
+//const cors = require('cors')
 const app = express()
-
+const URL = '/api/persons'
 // Middlewares
 app.use(express.json())
 app.use(morgan(function (tokens, req, res) {
@@ -16,7 +16,7 @@ app.use(morgan(function (tokens, req, res) {
   {return log_format.concat(JSON.stringify(req.body)).join(' ')}
   return log_format.join(' ')
 }))
-app.use(cors()) 
+//app.use(cors()) 
 app.use(express.static('dist'))
 
 let persons = [
@@ -47,7 +47,8 @@ let persons = [
     },
 ]
 
-app.get('/api/persons', (request, response) => {response.json(persons)
+app.get(URL, (request, response) => {
+  response.json(persons)
   console.log("get all is what it asks for")
 })
 
@@ -57,7 +58,7 @@ app.get('/info', (req, res) => {
                     <p>${new Date().toString()}</p>`)
 })
 
-app.get('/api/persons/:id', (req, res) => {
+app.get(`${URL}/:id`, (req, res) => {
     const id = req.params.id
     const person = persons.find(person => person.id === id)
     if (!person) 
@@ -65,7 +66,7 @@ app.get('/api/persons/:id', (req, res) => {
     res.json(person)
 })
 
-app.delete('/api/persons/:id', (req, res) =>{
+app.delete(`${URL}/:id`, (req, res) =>{
     const id = req.params.id
     const person = persons.find(person => person.id === id)
     if (!person) 
@@ -75,7 +76,7 @@ app.delete('/api/persons/:id', (req, res) =>{
 })
 
 
-app.post('/api/persons/', (req, res) => {
+app.post(URL, (req, res) => {
     const body = req.body
     console.log("new person entry is coming")
 
