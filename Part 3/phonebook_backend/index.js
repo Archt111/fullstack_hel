@@ -1,6 +1,8 @@
+require('dotenv').config()
+
+const Person = require('./models/person')
 const express = require('express')
 const morgan = require('morgan')
-//const cors = require('cors')
 const app = express()
 const URL = '/api/persons'
 // Middlewares
@@ -16,6 +18,8 @@ app.use(morgan(function (tokens, req, res) {
   {return log_format.concat(JSON.stringify(req.body)).join(' ')}
   return log_format.join(' ')
 }))
+
+
 //app.use(cors()) 
 app.use(express.static('dist'))
 
@@ -47,10 +51,13 @@ let persons = [
     },
 ]
 
-app.get(URL, (request, response) => {
-  response.json(persons)
-  console.log("get all is what it asks for")
-})
+app.get(URL, (req, res, next) => {
+  console.log('phonebook:')
+  Person.find({})
+        .then(phonebook => {res.json(phonebook)})
+        .catch(err => {next(err)})
+});
+
 
 
 app.get('/info', (req, res) => {
@@ -58,6 +65,7 @@ app.get('/info', (req, res) => {
                     <p>${new Date().toString()}</p>`)
 })
 
+//find person
 app.get(`${URL}/:id`, (req, res) => {
     const id = req.params.id
     const person = persons.find(person => person.id === id)
@@ -96,7 +104,7 @@ app.post(URL, (req, res) => {
     
 })
 
-const PORT = process.env.PORT || 3001
+const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
