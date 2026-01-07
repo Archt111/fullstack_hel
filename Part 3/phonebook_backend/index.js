@@ -23,34 +23,6 @@ app.use(morgan(function (tokens, req, res) {
 //app.use(cors()) 
 app.use(express.static('dist'))
 
-let persons = [
-    { 
-      "id": "1",
-      "name": "Arto Hellas", 
-      "number": "040-123456"
-    },
-    { 
-      "id": "2",
-      "name": "Ada Lovelace", 
-      "number": "39-44-5323523"
-    },
-    { 
-      "id": "3",
-      "name": "Dan Abramov", 
-      "number": "12-43-234345"
-    },
-    { 
-      "id": "4",
-      "name": "Mary Poppendieck", 
-      "number": "39-23-6423122"
-    },
-    { 
-      "id": "5",
-      "name": "Arto Bloop", 
-      "number": "040-123456"
-    },
-]
-
 app.get(URL, (req, res, next) => {
   console.log('phonebook:')
   Person.find({})
@@ -60,11 +32,13 @@ app.get(URL, (req, res, next) => {
 
 
 
-app.get('/info', (req, res) => {
-    Person.countDocuments({})
-          .then(count => res.send(`<p>Phonebook has info of ${count} people</p>
-                                   <p>${new Date().toString()}</p>`))
-  })
+app.get('/info', (req, res, next) => {
+  Person.countDocuments({})
+    .then(count => res.send(`<p>Phonebook has info of ${count} people</p>
+                             <p>${new Date().toString()}</p>`))
+    .catch(next);
+})
+
 
 //find person
 app.get(`${URL}/:id`, (req, res, next) => {
@@ -76,7 +50,7 @@ app.get(`${URL}/:id`, (req, res, next) => {
         .catch(err => next(err))
   })
 
-app.delete(`${URL}/:id`, (req, res) =>{
+app.delete(`${URL}/:id`, (req, res,next) =>{
     const id = req.params.id
     Person.findByIdAndDelete(id)
           .then(person => {
@@ -86,7 +60,7 @@ app.delete(`${URL}/:id`, (req, res) =>{
   })
 
 
-app.post(URL, (req, res) => {
+app.post(URL, (req, res,next) => {
     const new_name = req.body.name.trim()
     const new_number = req.body.number.trim()
     console.log("new person entry is coming")
@@ -102,8 +76,8 @@ app.post(URL, (req, res) => {
           }).then(saved => {if(!saved){return}
               console.log(`added ${new_name} number ${new_number} to phonebook`)
               res.status(201).json(saved)
-            }
-  )})
+          }).catch(next)
+  })
 
 app.put(`${URL}/:id`, (req, res, next) => {
     console.log("phone number is new")
@@ -117,6 +91,35 @@ app.put(`${URL}/:id`, (req, res, next) => {
           )}
           ).catch(error => next(error))
   })
+
+// error handling middleware
+const mongoose = require('mongoose');
+
+const unknownEndpoint = (req, res) => {
+  res.status(404).json({ error: 'unknown endpoint' });
+};
+
+const errorHandler = (err, req, res, next) => {
+  console.error(err.name, err.message);
+
+  if (err.name === 'CastError') {
+    return res.status(400).json({ error: 'malformed id' });
+  }
+
+  if (err.name === 'ValidationError') {
+    return res.status(400).json({ error: err.message });
+  }
+
+  // duplicate key error from unique index
+  if (err.code === 11000) {
+    return res.status(400).json({ error: 'name must be unique' });
+  }
+
+  return res.status(500).json({ error: 'internal server error' });
+};
+
+app.use(unknownEndpoint);
+app.use(errorHandler);
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
