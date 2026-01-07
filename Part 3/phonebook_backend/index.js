@@ -61,27 +61,29 @@ app.get(URL, (req, res, next) => {
 
 
 app.get('/info', (req, res) => {
-    res.send(`<p>Phonebook has info of ${persons.length} people</p>
-                    <p>${new Date().toString()}</p>`)
-})
+    Person.countDocuments({})
+          .then(count => res.send(`<p>Phonebook has info of ${count} people</p>
+                                   <p>${new Date().toString()}</p>`))
+  })
 
 //find person
-app.get(`${URL}/:id`, (req, res) => {
+app.get(`${URL}/:id`, (req, res, next) => {
     const id = req.params.id
-    const person = persons.find(person => person.id === id)
-    if (!person) 
-        {return res.status(404).json({error: "Person not found"})}
-    res.json(person)
-})
+    Person.findById(id).then(person =>{
+      if (!person) 
+          {return res.status(404).json({error: "Person not found"})}
+        res.json(person)})
+        .catch(err => next(err))
+  })
 
 app.delete(`${URL}/:id`, (req, res) =>{
     const id = req.params.id
-    const person = persons.find(person => person.id === id)
-    if (!person) 
-        {return res.status(404).json({error: "Person not found"})}
-    persons = persons.filter(person => person.id !== id)
-    res.status(200).json({deleted: `Person ${id} has been deleted`})
-})
+    Person.findByIdAndDelete(id)
+          .then(person => {
+            if (!person){return res.status(404).json({error: "Person not found"})}
+            res.status(200).json({deleted: `Person ${id} has been deleted`})
+          }).catch(err => next(err))
+  })
 
 
 app.post(URL, (req, res) => {
