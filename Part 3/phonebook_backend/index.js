@@ -87,24 +87,23 @@ app.delete(`${URL}/:id`, (req, res) =>{
 
 
 app.post(URL, (req, res) => {
-    const body = req.body
+    const new_name = req.body.name.trim()
+    const new_number = req.body.number.trim()
     console.log("new person entry is coming")
 
-    if (!body.name.trim() || !body.number.trim()){
+    if (!new_name || !new_number){
         return res.status(400).json({error: "name or number is missing"})
     }
-    if (persons.find(p => p.name === body.name)){
-        return res.status(400).json({ error: "name must be unique"})
-    }
-    const new_person = {
-        id : String(Math.floor(Math.random() * 1000000)),
-        name : body.name,
-        number : body.number
-    }
-    persons = persons.concat(new_person)
-    res.json(new_person)
-    
-})
+    Person.findOne({name: new_name})
+          .then(person => {
+            if(person){return res.status(400).json({ error: "name must be unique"})}
+            const new_person = new Person({name: new_name, number: new_number})
+            return new_person.save()
+          }).then(saved => {if(!saved){return}
+              console.log(`added ${new_name} number ${new_number} to phonebook`)
+              res.status(201).json(saved)
+            }
+  )})
 
 const PORT = process.env.PORT
 app.listen(PORT, () => {
