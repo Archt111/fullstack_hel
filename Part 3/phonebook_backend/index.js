@@ -105,6 +105,19 @@ app.post(URL, (req, res) => {
             }
   )})
 
+app.put(`${URL}/:id`, (req, res, next) => {
+    console.log("phone number is new")
+
+    Person.findById(req.params.id)
+          .then(person => {
+            if(!person){return res.status(404).json({ error: "the person is not found."})}
+            person.number = req.body.number.trim()
+            person.name = req.body.name.trim()
+            return person.save().then(saved => {res.status(201).json(saved)}
+          )}
+          ).catch(error => next(error))
+  })
+
 const PORT = process.env.PORT
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
