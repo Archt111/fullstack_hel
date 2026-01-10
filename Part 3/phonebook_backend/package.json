@@ -13,7 +13,8 @@
     "build:ui": "rm -rf dist && cd ../../Part\\ 2/phonebook && npm run build && cp -r dist ../../Part\\ 3/phonebook_backend",
     "deploy": "fly deploy",
     "deploy:full": "npm run build:ui && npm run deploy",
-    "logs:prod": "fly logs"
+    "logs:prod": "fly logs",
+    "lint": "eslint ."
   },
   "dependencies": {
     "dotenv": "^17.2.3",
@@ -22,6 +23,11 @@
     "morgan": "^1.10.1"
   },
   "devDependencies": {
-    "@flydotio/dockerfile": "^0.7.10"
+    "@eslint/js": "^9.39.2",
+    "@flydotio/dockerfile": "^0.7.10",
+    "@stylistic/eslint-plugin": "^5.6.1",
+    "eslint": "^9.39.2",
+    "eslint-plugin-react": "^7.37.5",
+    "globals": "^17.0.0"
   }
 }
