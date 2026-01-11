@@ -5,7 +5,7 @@ import {PersonForm} from "./components/PersonForm.jsx";
 import './index.css'
 import servertalk from './services/server.jsx'
 
-const getError = (error) =>
+const getError = (error) => 
   error.response.data.error || error.message || 'Unknown error'
 
 const App = () => {
@@ -29,7 +29,9 @@ const App = () => {
   // add error catching
   useEffect(() => {
     servertalk.load()
-      .then(initPersons => setPersons(initPersons))
+      .then(initPersons => 
+        {setPersons(initPersons)
+        console.log("restart...")})
       .catch(err => {
         setMessage({ text: getError(err), type: 'error' })
         console.error(err)
@@ -44,7 +46,7 @@ const App = () => {
     }
     
     servertalk
-      .create({name: newName, number: newPhone}) // Don't have to make the json entry, just dict. cool
+      .create({name: newName, number: newPhone})
       .then(p => {
         setPersons(persons.concat(p))
         resetForm()
@@ -53,7 +55,7 @@ const App = () => {
       .catch(err => {
         // change the verbose I made to a more standard error print from server
         setMessage({text: getError(err), type: 'error' })
-        console.error('create new entry fail',err)
+        console.error('create new entry fail',getError(err))
         resetForm()
       })
   }
@@ -100,7 +102,6 @@ const App = () => {
   const delButton = id => {
     const exist = persons.find(p => p.id === id)
     if (!exist || !window.confirm(`Delete ${exist.name}?`)) return
-    
     servertalk
       .deleteP(id)
       .then(() => {
