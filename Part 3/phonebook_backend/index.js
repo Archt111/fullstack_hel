@@ -22,7 +22,7 @@ app.use(express.json())
 })) */
 morgan.token('body', (req) => (req.method === 'POST' || req.method === 'PUT') ? JSON.stringify(req.body) : '')
 app.use(morgan(':method :url :status :res[content-length] - :response-time ms :body'))
-app.use(express.static('dist'))
+//app.use(express.static('dist'))
 
 
 app.get(URL, (req, res, next) => {
@@ -102,7 +102,7 @@ const unknownEndpoint = (req, res) => {
 }
 
 const errorHandler = (err, req, res, next) => {
-  console.error(err.name, err.message)
+  console.error(err.message)
 
   if (err.name === 'CastError') {
     return res.status(400).json({ error: 'malformed id' })
