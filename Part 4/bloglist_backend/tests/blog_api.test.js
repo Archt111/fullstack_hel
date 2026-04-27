@@ -76,6 +76,31 @@ test('blog without url is 400', async () => {
   await api.post('/api/blogs').send(newBlog).expect(400)
 })
 
+// 4.13 delete
+test('delete blog returns 204 if id valid', async () => {
+  const blogsInit = await api.get('/api/blogs')
+  const blogToDel = blogsInit.body[1]
+  await api.delete(`/api/blogs/${blogToDel.id}`).expect(204)
+  
+  const res = await api.get('/api/blogs')
+  assert.strictEqual(res.body.length, testBlogs.length-1)
+  assert.ok(!res.body.map(b=>b.title).includes(blogToDel.title))
+})
+
+
+// 4.14 update info
+test('update likes given id return 200 ', async () => {
+  const blogsInit = await api.get('/api/blogs')
+  const blogToUpdate = blogsInit.body[0]
+
+  // remember this syntax
+  const updatedBlog = { ...blogToUpdate, likes: blogToUpdate.likes + 1 }
+  await api.put(`/api/blogs/${blogToUpdate.id}`).send(updatedBlog).expect(200)
+
+  const res = await api.get('/api/blogs')
+  assert.strictEqual(res.body[0].likes, testBlogs[0].likes+1)
+})
+
 after(async () => {
   await mongoose.connection.close()
 })
