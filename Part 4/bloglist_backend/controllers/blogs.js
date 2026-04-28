@@ -1,5 +1,6 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const User = require('../models/user')
 
 /*
 blogsRouter.get('/', (request, response) => {
@@ -8,11 +9,10 @@ blogsRouter.get('/', (request, response) => {
   })
 })
  */
-blogsRouter.get('/', async (request,
-  response) => {
-    const blogs = await Blog.find({})
-    response.json(blogs)
-  })
+blogsRouter.get('/', async (request, response) => {
+  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+  response.json(blogs)
+})
   
 /*
 blogsRouter.post('/', (request, response) => {
@@ -33,22 +33,27 @@ blogsRouter.post('/', async (request, response) => {
   if (!title || !url) {
     return response.status(400).end()
   }
-  const blog = new Blog(request.body)
+  const user = await User.findOne({})
+  const blog = new Blog({ ...request.body, user: user._id })
   const result = await blog.save()
+  user.blogs = user.blogs.concat(result._id)
+  await user.save()
   response.status(201).json(result)
 })
 
 blogsRouter.delete('/:id', async (request, response) => {
-  await Blog.findByIdAndDelete(request.params.id)
-  response.status(204).end()                                                          
+  const deleted = await Blog.findByIdAndDelete(request.params.id)
+  if (!deleted) return response.status(404).end()
+  response.status(204).end()
 }) 
 
-blogsRouter.put('/:id', async (request, response) => {                                
-    const {likes} = request.body
-    const blog = await Blog.findById(request.params.id)                                 
-    if (!blog) return response.status(404).end()
-    blog.likes = likes
-    const updated = await blog.save()
-    response.json(updated)
+blogsRouter.put('/:id', async (request, response) => {
+  const { likes } = request.body
+  if (typeof likes !== 'number') return response.status(400).json({ error: 'likes must be a number' })
+  const blog = await Blog.findById(request.params.id)
+  if (!blog) return response.status(404).end()
+  blog.likes = likes
+  const updated = await blog.save()
+  response.json(updated)
 })
 module.exports = blogsRouter
