@@ -1,3 +1,6 @@
+const User = require('../models/user')
+let token = null
+
 const { test, after, beforeEach } = require('node:test')
 const assert = require('node:assert')
 const mongoose = require('mongoose')
@@ -24,7 +27,7 @@ const testBlogs = [
 // 4.8
 beforeEach(async () => {
   await blog.deleteMany({})
-  await blog.insertMany(testBlogs)
+  await User.deleteMany({})
 })
 
 test('blogs are returned as json', async () => {
