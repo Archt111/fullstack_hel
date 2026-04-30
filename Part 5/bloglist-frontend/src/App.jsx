@@ -13,7 +13,7 @@ const App = () => {
   const [errorMessage, setErrorMessage] = useState(null)
   const [successMessage, setSuccessMessage] = useState(null)
 
-  useEffect(() => { 
+  useEffect(() => {
     blogService.getAll().then(blogs => setBlogs(blogs))
   }, [])
 
@@ -31,7 +31,7 @@ const App = () => {
     try {
       const loggedUser = await loginService.login({ username, password })
       window.localStorage.setItem('loggedBlogappUser', JSON.stringify(loggedUser))
-      
+
       blogService.setToken(loggedUser.token)
       setUser(loggedUser)
       setUsername('')
@@ -52,6 +52,16 @@ const App = () => {
       setErrorMessage('failed to create blog')
       setTimeout(() => setErrorMessage(null), 5000)
     }
+  }
+
+  const handleLike = async (blog) => {
+    const updatedBlog = await blogService.update(blog.id, {
+      ...blog,
+      likes: blog.likes + 1,
+      user: blog.user?.id || blog.user?._id || blog.user,
+    })
+
+    setBlogs(blogs.map(currentBlog => currentBlog.id === blog.id ? updatedBlog : currentBlog))
   }
 
   const loginForm = () => (
@@ -83,7 +93,7 @@ const App = () => {
       <Togglable buttonLabel="create new blog">
         <BlogForm createBlog={createBlog} />
       </Togglable>
-      {blogs.map(blog => <Blog key={blog.id} blog={blog} />)}
+      {blogs.map(blog => <Blog key={blog.id} blog={blog} handleLike={handleLike} />)}
     </div>
   )
 
