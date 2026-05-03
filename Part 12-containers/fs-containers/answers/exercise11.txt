@@ -1,0 +1,96 @@
+## TERMINAL 1
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml exec -T redis redis-cli GET added_todos
+
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml down
+[+] down 3/3
+ ✔ Container todo-backend-mongo-1 Removed                                                                 2.3s
+ ✔ Container todo-backend-redis-1 Removed                                                                 1.8s
+ ✔ Network todo-backend_default   Removed                                                                 0.3s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml down -v
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker ps
+CONTAINER ID   IMAGE     COMMAND   CREATED   STATUS    PORTS     NAMES
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml ps
+NAME      IMAGE     COMMAND   SERVICE   CREATED   STATUS    PORTS
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml up -d
+[+] up 2/2
+ ✔ Container todo-backend-mongo-1 Started                                                                        0.4s
+ ✔ Container todo-backend-redis-1 Started                                                                        0.4s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml ps
+NAME                   IMAGE     COMMAND                  SERVICE   CREATED         STATUS          PORTS
+todo-backend-mongo-1   mongo     "docker-entrypoint.s…"   mongo     9 minutes ago   Up 10 seconds   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp
+todo-backend-redis-1   redis     "docker-entrypoint.s…"   redis     9 minutes ago   Up 10 seconds   0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker exec -it todo-backend-redis-1 redis-cli
+127.0.0.1:6379> KEYS *
+(empty array)
+127.0.0.1:6379> GET added_todos
+(nil)
+127.0.0.1:6379> SET added_todos 9001
+OK
+127.0.0.1:6379> exit
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# curl -s -X POST http://localhost:3000/todos \
+  -H "Content-Type: application/json" \
+  -d '{"text":"Test todo 1","done":false}' | jq .
+{
+  "text": "Test todo 1",
+  "done": false,
+  "_id": "69f4aac4bda2cd68dd5c91a8",
+  "__v": 0
+}
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# curl -s http://localhost:3000/statistics | jq .
+{
+  "added_todos": 9002
+}
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# curl -s -X GET http://localhost:3000/todos 
+[{"_id":"69f4aac4bda2cd68dd5c91a8","text":"Test todo 1","done":false,"__v":0}]
+
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# curl -X DELETE http://localhost:3000/todos/69f4aac4bda2cd68dd5c91a8
+OK
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# curls -X GET http://localhost:3000/todos a8
+[]
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# curl -s -X GET http://localhost:3000/todos
+[]
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# 
+
+
+
+
+
+
+## TERMINAL 2:
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# MONGO_URL='mongodb://root:example@localhost:3456/the_database?authSource=admin' REDIS_URL='redis://localhost:6379' npm start
+
+> todo-express-backend@0.0.0 start
+> node ./bin/www
+
+Redis Client Error ConnectionTimeoutError: Connection timeout
+    at Socket.onTimeout (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/@redis/client/dist/lib/client/socket.js:207:46)
+    at Object.onceWrapper (node:events:631:28)
+    at Socket.emit (node:events:517:28)
+    at Socket._onTimeout (node:net:599:8)
+    at listOnTimeout (node:internal/timers:569:17)
+    at process.processTimers (node:internal/timers:512:7)
+Connected to Redis
+GET /todos 200 27.201 ms - 2
+GET /favicon.ico 404 1.867 ms - 150
+GET /todos 304 6.647 ms - -
+GET / 200 0.591 ms - 131
+GET / 200 0.678 ms - 131
+GET / 200 1.269 ms - 131
+GET /todos 304 75.549 ms - -
+GET /todos 304 5.635 ms - -
+GET / 200 1.620 ms - 131
+GET /statistics 200 63.991 ms - 17
+GET /statistics 304 50.054 ms - -
+GET / 200 4.186 ms - 131
+GET /statistics 200 42.790 ms - 20
+GET /todos 304 91.987 ms - -
+GET /todos 304 4.484 ms - -
+POST /todos 200 960.391 ms - 76
+GET /statistics 200 2.196 ms - 20
+GET /todos 200 16.462 ms - 78
+DELETE /todos/69f4aac4bda2cd68dd5c91a8 200 78.363 ms - 2
+GET /todos 200 4.096 ms - 2
+GET /todos 200 3.938 ms - 2
+GET /todos 200 6.009 ms - 2
+GET /.well-known/appspecific/com.chrome.devtools.json 404 0.533 ms - 187
+GET /todos 200 4.117 ms - 2

@@ -1,0 +1,23 @@
+I ran Docker on WSL as my laptop can't have it. Here are the steps I did:
+# Exercise 5
+
+1. Mount my cloned project on my laptop to edit it on WSL
+2. Run these in order:
+    - npm install
+    - npm start
+3. Create Dockerfile:
+    FROM node:24
+
+    WORKDIR /usr/src/app
+
+    COPY . .
+
+    RUN npm ci
+
+    ENV PORT=3000
+
+    CMD ["npm", "start"]
+
+4. Build image and map port to open on my local
+    - docker build -t todo-backend .
+    - docker run -p 3000:3000 todo-backend

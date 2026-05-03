@@ -31,18 +31,27 @@
 - docker run -p host:container exposes a container port on your machine.
 - Docker Compose defines services in one file and starts them together.
 - docker compose up starts the stack.
-docker compose up --build rebuilds before starting.
-docker compose down stops the stack.
-Bind mounts connect a file or folder on your machine to a path in the container.
-Volumes are for persisting data outside the container lifecycle.
-docker exec -it lets you enter a running container for debugging.
+- docker compose up --build rebuilds before starting.
+- docker exec -it lets you enter a running container for debugging.
+- Bind mounts connect a file or folder on your machine to a path in the container. Volumes are for persisting data outside the container lifecycle.
+
+### Chapter 4: orchestration 
+- Debugging: once your node.js version is too old and causing problem. Steps: 
+    1. Install newer version: `curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -`
+                              `sudo apt-get install -y nodejs`
+    2. Delete corrupted package-lock.json: `rm -rf node_modules package-lock.json`
+    3. `npm install`
+- Build docker image with env: `docker build --build-arg VITE_BACKEND_URL='---' -t todo-frontend .`
+
+
 ## What to Understand
 
 ### Chapter 2: basic commands
 - Why containers exist: isolate dependencies and make local and server environments more consistent.
 - The difference between a container and an image in the lifecycle sense: image is the blueprint, container is the running process.
-- Why `docker start -i` is needed: interactivity mode is set when the container is created, so you must use `-i` to re-enter it interactively.
-- Why `docker commit` is a workaround: it saves a container's state as a snapshot, but it does not record how the image was built, making it harder to maintain or rebuild than a Dockerfile.
+- `docker start -i` to get inside the container 
+- `docker commit` save the current state of a container into a new image, but it's a manual snapshot, not a repeatable recipe. It doesn't record how the image was built, so it is harder to rebuild, review, or maintain than a Dockerfile-based image build.
 
 ### Chapter 3: build image with config files
-Running as a non-root user is a security best practice and reduces the risk of accidental damage inside the container.
+- Running as a non-root user is a security best practice and reduces the risk of accidental damage inside the container.
+- 

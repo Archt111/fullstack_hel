@@ -1,0 +1,204 @@
+# TERMINAL 1
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED       STATUS       PORTS                                           NAMES
+d197fd59012a   mongo     "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp   todo-backend-mongo-1
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml up -d
+[+] up 1/1
+ ✔ Container todo-backend-mongo-1 Running                               0.0s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker ps
+CONTAINER ID   IMAGE     COMMAND                  CREATED       STATUS       PORTS                                           NAMES
+d197fd59012a   mongo     "docker-entrypoint.s…"   2 hours ago   Up 2 hours   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp   todo-backend-mongo-1
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker exec -it  todo-backend-mongo-1 mongosh -u root -p example
+Current Mongosh Log ID: 69f483c28ba087b98744ba88
+Connecting to:          mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.8.2
+MongoServerError: Authentication failed.
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml down --volumes
+[+] down 2/2
+ ✔ Container todo-backend-mongo-1 Removed                               1.5s
+ ✔ Network todo-backend_default   Removed                               0.3s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker image rm mongo
+Untagged: mongo:latest
+Deleted: sha256:7abfba0d07c9330373f8173981ea4d09cd8a82cdf0e86ccaf7008848d1d24f62
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml up -d
+[+] up 12/12
+ ✔ Image mongo                    Pulled                               34.8s
+ ✔ Network todo-backend_default   Created                               0.2s
+ ✔ Container todo-backend-mongo-1 Started                               1.5s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml ps
+NAME                   IMAGE     COMMAND                  SERVICE   CREATED         STATUS         PORTS
+todo-backend-mongo-1   mongo     "docker-entrypoint.s…"   mongo     8 seconds ago   Up 7 seconds   0.0.0.0:3456->27017/tcp, [::]:3456->27017/tcp
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker exec -it  todo-backend-mongo-1 mongosh -u root -p example
+Current Mongosh Log ID: 69f484573682cdb45044ba88
+Connecting to:          mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&appName=mongosh+2.8.2
+Using MongoDB:          8.2.7
+Using Mongosh:          2.8.2
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+------
+   The server generated these startup warnings when booting
+   2026-05-01T10:45:30.674+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2026-05-01T10:45:31.555+00:00: Soft rlimits for open file descriptors too low
+   2026-05-01T10:45:31.556+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-05-01T10:45:31.556+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-05-01T10:45:31.556+00:00: We suggest setting the contents of sysfsFile to 0.
+   2026-05-01T10:45:31.556+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+------
+
+test> show dbs
+admin   100.00 KiB
+config   12.00 KiB
+local    72.00 KiB
+test> use the_database
+switched to db the_database
+the_database> show collections
+
+the_database> db.todos.insertOne({ text: "Learn about containers", done: falthe_database> db.todos.insertOne({ text: "Increase the number of tools in mythe_database> db.todos.insertOne({ text: "Increase the number of tools in my tool belt", done: false })
+{
+  acknowledged: true,
+  insertedId: ObjectId('69f485fa3682cdb45044ba89')
+}
+the_database>  db.todos.find({})
+[
+  {
+    _id: ObjectId('69f485fa3682cdb45044ba89'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
+
+the_database> exit
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# npm install
+MONGO_URL=mongodb://root:example@localhost:3456/the_database npm start
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'bson@7.2.0',
+npm WARN EBADENGINE   required: { node: '>=20.19.0' },
+npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'mongodb@7.0.0',
+npm WARN EBADENGINE   required: { node: '>=20.19.0' },
+npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'mongodb-connection-string-url@7.0.1',
+npm WARN EBADENGINE   required: { node: '>=20.19.0' },
+npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'mongoose@9.2.3',
+npm WARN EBADENGINE   required: { node: '>=20.19.0' },
+npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
+npm WARN EBADENGINE }
+npm WARN EBADENGINE Unsupported engine {
+npm WARN EBADENGINE   package: 'mquery@6.0.0',
+npm WARN EBADENGINE   required: { node: '>=20.19.0' },
+npm WARN EBADENGINE   current: { node: 'v18.19.1', npm: '9.2.0' }
+npm WARN EBADENGINE }
+
+up to date, audited 125 packages in 2s
+
+29 packages are looking for funding
+  run `npm fund` for details
+
+found 0 vulnerabilities
+
+> todo-express-backend@0.0.0 start
+> node ./bin/www
+
+node:internal/process/promises:288
+            triggerUncaughtException(err, true /* fromPromise */);
+            ^
+
+MongoServerError: Authentication failed.
+    at Connection.sendCommand (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/mongodb/lib/cmap/connection.js:320:27)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async Connection.command (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/mongodb/lib/cmap/connection.js:344:26)
+    at async executeScram (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/mongodb/lib/cmap/auth/scram.js:79:22)
+    at async ScramSHA256.auth (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/mongodb/lib/cmap/auth/scram.js:39:16)
+    at async performInitialHandshake (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/mongodb/lib/cmap/connect.js:104:13)
+    at async connect (/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend/node_modules/mongodb/lib/cmap/connect.js:24:9) {
+  errorLabelSet: Set(2) { 'HandshakeError', 'ResetPool' },
+  errorResponse: {
+    ok: 0,
+    errmsg: 'Authentication failed.',
+    code: 18,
+    codeName: 'AuthenticationFailed'
+  },
+  ok: 0,
+  code: 18,
+  codeName: 'AuthenticationFailed',
+  connectionGeneration: 0
+}
+
+Node.js v18.19.1
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml down --volumes
+[+] down 2/2
+ ✔ Container todo-backend-mongo-1 Removed                               1.3s
+ ✔ Network todo-backend_default   Removed                               0.3s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker compose -f docker-compose.dev.yml up -d
+[+] up 2/2
+ ✔ Network todo-backend_default   Created                               0.1s
+ ✔ Container todo-backend-mongo-1 Started                               1.2s
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend# docker exec -it todo-backend-mongo-1 mongosh -u root -p example --authenticationDatabase ad
+min
+Current Mongosh Log ID: 69f487b652a70cfe2344ba88
+Connecting to:          mongodb://<credentials>@127.0.0.1:27017/?directConnection=true&serverSelectionTimeoutMS=2000&authSource=admin&appName=mongosh+2.8.2
+Using MongoDB:          8.2.7
+Using Mongosh:          2.8.2
+
+For mongosh info see: https://www.mongodb.com/docs/mongodb-shell/
+
+
+To help improve our products, anonymous usage data is collected and sent to MongoDB periodically (https://www.mongodb.com/legal/privacy-policy).
+You can opt-out by running the disableTelemetry() command.
+
+------
+   The server generated these startup warnings when booting
+   2026-05-01T10:59:33.909+00:00: Using the XFS filesystem is strongly recommended with the WiredTiger storage engine. See http://dochub.mongodb.org/core/prodnotes-filesystem
+   2026-05-01T10:59:35.205+00:00: Soft rlimits for open file descriptors too low
+   2026-05-01T10:59:35.206+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-05-01T10:59:35.206+00:00: For customers running the current memory allocator, we suggest changing the contents of the following sysfsFile
+   2026-05-01T10:59:35.206+00:00: We suggest setting the contents of sysfsFile to 0.
+   2026-05-01T10:59:35.207+00:00: We suggest setting swappiness to 0 or 1, as swapping can cause performance problems.
+------
+
+test> show dbs
+admin         100.00 KiB
+config         72.00 KiB
+local          72.00 KiB
+the_database    8.00 KiB
+test> use the_database
+switched to db the_database
+the_database> show collections
+todos
+the_database> db.todos.find({})
+
+the_database> db.todos.insertOne({ text: "Increase the number of tools in my tool belt", done: false })
+{
+  acknowledged: true,
+  insertedId: ObjectId('69f492f652a70cfe2344ba89')
+}
+the_database> db.todos.find({})
+[
+  {
+    _id: ObjectId('69f492f652a70cfe2344ba89'),
+    text: 'Increase the number of tools in my tool belt',
+    done: false
+  }
+]
+
+# TERMINAL 2:
+root@Nemo:/mnt/c/Users/myng2/OneDrive - Aalto University/Maester study/Fullstack/Part 12-containers/fs-containers/todo-app/todo-backend#  MONGO_URL=mongodb://root:example@localhost:3456/the_database?authSource=admin npm start
+
+> todo-express-backend@0.0.0 start
+> node ./bin/www
+
+GET /todos 200 66.799 ms - 2
+GET /todos 304 6.204 ms - -
+GET /todos 200 42.519 ms - 103
+
