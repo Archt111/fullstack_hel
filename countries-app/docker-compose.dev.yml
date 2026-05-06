@@ -1,0 +1,36 @@
+services:
+  app:
+    image: countries-frontend-dev
+    build:
+      context: ./countries-frontend
+      dockerfile: dev.Dockerfile
+    expose:
+      - '5173'
+    volumes:
+      - ./countries-frontend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - VITE_BACKEND_URL=/api
+
+  backend:
+    image: countries-backend-dev
+    build:
+      context: ./countries-backend
+      dockerfile: dev.Dockerfile
+    expose:
+      - '3000'
+    volumes:
+      - ./countries-backend:/usr/src/app
+      - /usr/src/app/node_modules
+    environment:
+      - OPENWEATHER_API_KEY=${OPENWEATHER_API_KEY}
+
+  nginx:
+    image: nginx:1.29-alpine
+    ports:
+      - 8081:80
+    volumes:
+      - ./nginx.dev.conf:/etc/nginx/nginx.conf:ro
+    depends_on:
+      - app
+      - backend
