@@ -6,6 +6,7 @@ const AnecdoteForm = () => {
   const handleSubmit = (e) => {
     e.preventDefault()
     const content = e.target.anecdote.value
+    console.log('[AnecdoteForm.handleSubmit] submit content:', `"${content}"`)
     add(content)
     e.target.reset()
   }
