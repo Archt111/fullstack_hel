@@ -16,6 +16,10 @@ const getAll = async () => {
 
 const createNew = async (content) => {
   console.log('[service.createNew] called with content:', content)
+  if (content.trim().length < 5) {
+    throw new Error('Anecdote must be at least 5 characters long')
+  }
+
   const response = await fetch(baseUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

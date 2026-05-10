@@ -1,10 +1,12 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 import anecdoteService from '../services/anecdotes'
 import { useAnecdoteFilter } from '../store'
+import { useNotify } from './useNotify'
 
 export const useAnecdotes = () => {
   const queryClient = useQueryClient()
   const filter = useAnecdoteFilter()
+  const { notify } = useNotify()
 
   // Grab anecdotes from backend and keep them cached here.
   const result = useQuery({
@@ -19,6 +21,9 @@ export const useAnecdotes = () => {
     onSuccess: (created) => {
       const anecdotes = queryClient.getQueryData(['anecdotes']) || []
       queryClient.setQueryData(['anecdotes'], anecdotes.concat(created))
+    },
+    onError: () => {
+      notify('too short anecdote, must have length 5 or more', 5)
     },
   })
 
@@ -56,4 +61,3 @@ export const useAnecdotes = () => {
     voteAnecdote,
   }
 }
-

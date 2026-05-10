@@ -1,6 +1,6 @@
 import React from 'react'
 import { useAnecdotes, useAnecdoteActions } from '../store'
-import { useNotificationActions } from '../notificationStore'
+import { useNotify } from '../hooks/useNotify'
 
 const Button = ({ onClick, text }) => <button onClick={onClick}>{text}</button>
 
@@ -9,7 +9,8 @@ const AnecdoteList = ({ anecdotes, voteAnecdote }) => {
   // const { vote } = useAnecdoteActions()
   const storeAnecdotes = useAnecdotes()
   const { vote } = useAnecdoteActions()
-  const { setNotification } = useNotificationActions()
+  // const { setNotification } = useNotificationActions()
+  const { notify } = useNotify()
   const anecdotesToShow = anecdotes ?? storeAnecdotes
   const voteFn = voteAnecdote ?? vote
   // We keep this line so old path is easy to compare while reading:
@@ -31,7 +32,7 @@ const AnecdoteList = ({ anecdotes, voteAnecdote }) => {
                     // await vote(anecdote.id)
                     // New way for 6.18/6.19:
                     await voteFn(anecdote.id)
-                    setNotification(`you voted '${anecdote.content}'`, 5)
+                    notify(`you voted '${anecdote.content}'`, 5)
                   }}
                   text='vote'
                 />

@@ -16,9 +16,9 @@ vi.mock('../store', () => ({
   })),
 }))
 
-vi.mock('../notificationStore', () => ({
-  useNotificationActions: vi.fn(() => ({
-    setNotification: vi.fn(),
+vi.mock('../hooks/useNotify', () => ({
+  useNotify: vi.fn(() => ({
+    notify: vi.fn(),
   })),
 }))
 
