@@ -88,6 +88,13 @@ test('blog without url is 400', async () => {
   await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400)
 })
 
+test('duplicate blog is rejected with 400', async () => {
+  const newBlog = { title: 'Same blog', author: 'Eve', url: 'http://example.com/same', likes: 1 }
+  await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(201)
+  const duplicateResponse = await api.post('/api/blogs').set('Authorization', `Bearer ${token}`).send(newBlog).expect(400)
+  assert.strictEqual(duplicateResponse.body.error, 'blog already exists')
+})
+
 // 4.23
   test('post without token returns 401', async () => {
   const newBlog = { title: 'No token blog', author:'Test', url: 'http://example.com/notoken' }

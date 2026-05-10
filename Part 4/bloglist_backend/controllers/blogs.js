@@ -18,8 +18,13 @@ blogsRouter.get('/', async (request, response) => {
 })
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
-  const { title, url } = request.body
+  const { title, url, author } = request.body
   if (!title || !url) return response.status(400).end()
+
+  const existingBlog = await Blog.findOne({ title, author, url })
+  if (existingBlog) {
+    return response.status(400).json({ error: 'blog already exists' })
+  }
 
   const user = request.user
   const blog = new Blog({ ...request.body, user: user._id })
