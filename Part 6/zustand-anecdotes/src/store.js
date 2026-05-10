@@ -49,6 +49,7 @@ const useAnecdoteStore = create((set) => ({
       set(() => ({ anecdotes }))
       console.log('[store.actions.initialize] loaded count:', anecdotes.length)
     },
+    setAnecdotes: (anecdotes) => set(() => ({ anecdotes })),
     setFilter: filter => set(() => {
       console.log('[store.actions.setFilter] called with filter:', filter)
       return { filter }
