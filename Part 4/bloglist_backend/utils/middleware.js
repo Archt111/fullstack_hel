@@ -1,7 +1,6 @@
 const logger = require('./logger')
 const jwt = require('jsonwebtoken')
 const User = require('../models/user')
-// const { use } = require('react')
 
 const requestLogger = (request, response, next) => {
   logger.info('Method:', request.method)
@@ -16,7 +15,17 @@ const unknownEndpoint = (request, response) => {
 }
 
 const errorHandler = (error, request, response, next) => {
-  logger.error(error.message)
+  logger.error('[error-handler] name:', error.name)
+  logger.error('[error-handler] message:', error.message)
+
+  if (error.code) {
+    logger.error('[error-handler] code:', error.code)
+  }
+
+  logger.error('[error-handler] request:', `${request.method} ${request.path}`)
+  if (error.stack) {
+    logger.error('[error-handler] stack:', error.stack)
+  }
 
   if (error.name === 'CastError') {
     return response.status(400).send({ error: 'malformatted id' })
@@ -31,16 +40,26 @@ const errorHandler = (error, request, response, next) => {
   }
 
   if (error.name === 'JsonWebTokenError') {
-    return response.status(401).json({ error: 'token invalid' })}
-  
-  next(error)
+    return response.status(401).json({ error: 'token invalid' })
+  }
+
+  if (error.name === 'TokenExpiredError') {
+    return response.status(401).json({ error: 'token expired' })
+  }
+
+  if (error.name === 'SyntaxError') {
+    return response.status(400).json({ error: 'malformatted request body' })
+  }
+
+  return response.status(500).json({ error: 'internal server error' })
 }
 
 const tokenExtractor = (request, response, next) => {
-    const authorization = request.get('authorization')
-    if (authorization && authorization.startsWith('Bearer ')) {
-      request.token = authorization.replace('Bearer ', '')}
-    next()
+  const authorization = request.get('authorization')
+  if (authorization && authorization.startsWith('Bearer ')) {
+    request.token = authorization.replace('Bearer ', '')
+  }
+  next()
 }
 
 const userExtractor = async (request, response, next) => {
@@ -48,4 +67,5 @@ const userExtractor = async (request, response, next) => {
   request.user = await User.findById(decodedToken.id)
   next()
 }
-module.exports = { requestLogger, unknownEndpoint, errorHandler, tokenExtractor , userExtractor}
+
+module.exports = { requestLogger, unknownEndpoint, errorHandler, tokenExtractor, userExtractor }

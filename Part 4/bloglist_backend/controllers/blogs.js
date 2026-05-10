@@ -1,10 +1,20 @@
 const blogsRouter = require('express').Router()
 const Blog = require('../models/blog')
+const logger = require('../utils/logger')
 const { userExtractor } = require('../utils/middleware')
 
 blogsRouter.get('/', async (request, response) => {
-  const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
-  response.json(blogs)
+  const start = Date.now()
+  logger.info('[debug] GET /api/blogs start')
+  // caveman debug: if slow, mongo query maybe stuck
+  try {
+    const blogs = await Blog.find({}).populate('user', { username: 1, name: 1 })
+    logger.info(`[debug] GET /api/blogs ok in ${Date.now() - start}ms, count=${blogs.length}`)
+    response.json(blogs)
+  } catch (error) {
+    logger.error(`[debug] GET /api/blogs fail in ${Date.now() - start}ms: ${error.message}`)
+    throw error
+  }
 })
 
 blogsRouter.post('/', userExtractor, async (request, response) => {
