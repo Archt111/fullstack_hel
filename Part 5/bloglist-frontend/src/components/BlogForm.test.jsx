@@ -3,10 +3,6 @@ import userEvent from '@testing-library/user-event'
 import { vi } from 'vitest'
 import BlogForm from './BlogForm'
 
-vi.mock('react-router-dom', () => ({
-  useNavigate: () => vi.fn(),
-}))
-
 test('<BlogForm /> calls createBlog with correct details', async () => {
   const createBlog = vi.fn()
   const user = userEvent.setup()
@@ -22,6 +18,6 @@ test('<BlogForm /> calls createBlog with correct details', async () => {
   expect(createBlog.mock.calls[0][0]).toEqual({
     title: 'Test title',
     author: 'Test author',
-    url: 'http://example.com/blog'
+    url: 'http://example.com/blog',
   })
 })

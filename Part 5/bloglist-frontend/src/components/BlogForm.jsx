@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { TextField, Button } from '@mui/material'
 
 const BlogForm = ({ createBlog }) => {
   const [title, setTitle] = useState('')
@@ -17,24 +18,20 @@ const BlogForm = ({ createBlog }) => {
   }
 
   return (
-    <div>
-      <h2>create new blog</h2>
-      <form onSubmit={handleSubmit}>
-        <div>
-          <label htmlFor="title">title</label>
-          <input id="title" value={title} onChange={({ target }) => setTitle(target.value)} />
-        </div>
-        <div>
-          <label htmlFor="author">author</label>
-          <input id="author" value={author} onChange={({ target }) => setAuthor(target.value)} />
-        </div>
-        <div>
-          <label htmlFor="url">url</label>
-          <input id="url" value={url} onChange={({ target }) => setUrl(target.value)} />
-        </div>
-        <button type="submit">create</button>
-      </form>
-    </div>
+    <form onSubmit={handleSubmit}>
+      <div>
+        <TextField label="title" id="title" value={title} onChange={({ target }) => setTitle(target.value)} fullWidth />
+      </div>
+      <div style={{ marginTop: 10 }}>
+        <TextField label="author" id="author" value={author} onChange={({ target }) => setAuthor(target.value)} fullWidth />
+      </div>
+      <div style={{ marginTop: 10 }}>
+        <TextField label="url" id="url" value={url} onChange={({ target }) => setUrl(target.value)} fullWidth />
+      </div>
+      <Button variant="contained" color="primary" type="submit" style={{ marginTop: 10 }}>
+        create
+      </Button>
+    </form>
   )
 }
 
